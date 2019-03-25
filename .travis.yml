@@ -10,4 +10,4 @@ install: pip install codecov pytest-cov
 script: python setup.py test
 
 # Generate coverage and deploy to `codecov.io`
-after_success: python setup.py test --addopts '--cov=hdrie' && codecov --token=$CODECOV_TOKEN
+after_success: python setup.py cov && codecov --token=$CODECOV_TOKEN
