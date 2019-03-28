@@ -31,13 +31,13 @@ def debevec_maliks(Z, dT, l, w):
         Returnerer en tuple der første er responskurven til bildesettet og den
         andre delen er den logaritmiske irradiansen til pikslene.
     """
-    n = 256
+    n = 255
 
     A = np.zeros((Z.shape[0] * Z.shape[1] + n, n + Z.shape[0]))
-    b = np.zeros((A.shape[0], 1), dtype='float')
+    b = np.zeros(A.shape[0])
 
     # Sett inn de data-tilpassende funksjonene
-    k = 1
+    k = 0
     for i in range(Z.shape[0]):
         for j in range(Z.shape[1]):
             wij = w(Z[i, j])
@@ -45,12 +45,12 @@ def debevec_maliks(Z, dT, l, w):
             A[k, Z[i, j]] = wij
             A[k, n+i] = -wij
 
-            b[k, 0] = wij * dT[j]
+            b[k] = wij * dT[j]
 
             k += 1
 
     # Fiks kurven ved å sette midtpunktet til 0
-    A[k, 129] = 1
+    A[k, 128] = 0
     k += 1
 
     # Ta hensyn til glattheten
@@ -59,7 +59,9 @@ def debevec_maliks(Z, dT, l, w):
         A[k, i + 1] = -2 * l * w(i)
         A[k, i + 2] = l * w(i)
 
-    # Løs likningssettet
-    x = np.linalg.lstsq(A, b, rcond=None)
+        k += 1
 
-    return (x[:n], x[n+1:])
+    # Løs likningssettet
+    x = np.linalg.lstsq(A, b, rcond=None)[0]
+
+    return x[:n], x[n:]
