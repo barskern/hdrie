@@ -45,7 +45,7 @@ def debevec_maliks(Z, dT, l, w, n):
             wij = w(Z[i, j])
 
             A[k, Z[i, j]] = wij
-            A[k, n+i] = -wij
+            A[k, n + i] = -wij
 
             b[k] = wij * dT[j]
 
@@ -56,7 +56,7 @@ def debevec_maliks(Z, dT, l, w, n):
     k += 1
 
     # Ta hensyn til glattheten
-    for i in range(n-1):
+    for i in range(n - 1):
         A[k, i] = l * w(i)
         A[k, i + 1] = -2 * l * w(i)
         A[k, i + 2] = l * w(i)
