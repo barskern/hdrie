@@ -6,7 +6,7 @@ med bilder for å kunne gjennskape et bilde med høy dynamisk radians.
 import numpy as np
 
 
-def debevec_maliks(Z, dT, l, w):
+def debevec_maliks(Z, dT, l, w, n):
     """
     Gitt et sett med pikselverdier (i) observert over flere bilder med ulik
     eksponering (j), returner responskurven til bildesettet og logaritmen til
@@ -23,6 +23,8 @@ def debevec_maliks(Z, dT, l, w):
         Konstant som bestemmer mengden glatthet.
     w : function
         Returnerer et vekttall basert på gitt z.
+    n : integer
+        Antall ulike pikselverdier (antar at pikselverdier starter på 0).
 
     Returnerer
     ----------
@@ -31,8 +33,6 @@ def debevec_maliks(Z, dT, l, w):
         Returnerer en tuple der første er responskurven til bildesettet og den
         andre delen er den logaritmiske irradiansen til pikslene.
     """
-    n = 256
-
     A = np.zeros((Z.shape[0] * Z.shape[1] + n, n + Z.shape[0]))
     b = np.zeros(A.shape[0])
 
