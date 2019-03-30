@@ -33,6 +33,8 @@ def debevec_maliks(Z, dT, l, w, n):
         Returnerer en tuple der første er responskurven til bildesettet og den
         andre delen er den logaritmiske irradiansen til pikslene.
     """
+    # start snippet debevec-maliks-algo
+
     A = np.zeros((Z.shape[0] * Z.shape[1] + n, n + Z.shape[0]))
     b = np.zeros(A.shape[0])
 
@@ -65,3 +67,5 @@ def debevec_maliks(Z, dT, l, w, n):
     x = np.linalg.lstsq(A, b, rcond=None)[0]
 
     return x[:n], x[n:]
+
+    # end snippet debevec-maliks-algo
