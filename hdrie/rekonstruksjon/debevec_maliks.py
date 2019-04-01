@@ -35,7 +35,7 @@ def debevec_maliks(Z, dT, l, w, n):
     """
     # start snippet debevec-maliks-algo
 
-    A = np.zeros((Z.shape[0] * Z.shape[1] + n, n + Z.shape[0]))
+    A = np.zeros((Z.shape[0] * Z.shape[1] + n - 1, n + Z.shape[0]))
     b = np.zeros(A.shape[0])
 
     # Sett inn de data-tilpassende funksjonene
@@ -52,14 +52,14 @@ def debevec_maliks(Z, dT, l, w, n):
             k += 1
 
     # Fiks kurven ved å sette midtpunktet til 0
-    A[k, n // 2] = 0
+    A[k, n // 2] = 1
     k += 1
 
     # Ta hensyn til glattheten
-    for i in range(n - 1):
-        A[k, i] = l * w(i)
-        A[k, i + 1] = -2 * l * w(i)
-        A[k, i + 2] = l * w(i)
+    for i in range(n - 2):
+        A[k, i] = l * w(i + 1)
+        A[k, i + 1] = -2 * l * w(i + 1)
+        A[k, i + 2] = l * w(i + 1)
 
         k += 1
 
