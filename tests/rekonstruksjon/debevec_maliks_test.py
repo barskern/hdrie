@@ -32,7 +32,7 @@ def w(z):
 
 
 def test_debevec_maliks():
-    g, _ = debevec_maliks(Z, DTS, 0.1, lambda z: w(z + 1), 256)
+    g, _ = debevec_maliks(Z, DTS, 0.1, w, 256)
 
     # Enkeltderiverte til `g`.
     dts = g[1:] - g[:-1]
