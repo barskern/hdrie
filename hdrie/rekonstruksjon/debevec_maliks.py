@@ -24,7 +24,7 @@ def debevec_maliks(Z, dT, l, w, n):
     w : function
         Returnerer et vekttall basert på gitt z.
     n : integer
-        Antall ulike pikselverdier (antar at pikselverdier starter på 0).
+        Antall ulike pikselverdier (antar at pikselverdier går fra 0 til n - 1).
 
     Returnerer
     ----------
