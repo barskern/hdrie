@@ -24,7 +24,7 @@ def debevec_maliks(Z, dT, l, w, n):
     w : function
         Returnerer et vekttall basert på gitt z.
     n : integer
-        Antall ulike pikselverdier (antar at pikselverdier starter på 0).
+        Antall ulike pikselverdier (antar at pikselverdier går fra 0 til n - 1).
 
     Returnerer
     ----------
@@ -56,10 +56,10 @@ def debevec_maliks(Z, dT, l, w, n):
     k += 1
 
     # Ta hensyn til glattheten
-    for i in range(n - 2):
-        A[k, i] = l * w(i + 1)
-        A[k, i + 1] = -2 * l * w(i + 1)
-        A[k, i + 2] = l * w(i + 1)
+    for i in range(1, n - 1):
+        A[k, i - 1] = l * w(i)
+        A[k, i] = -2 * l * w(i)
+        A[k, i + 1] = l * w(i)
 
         k += 1
 
