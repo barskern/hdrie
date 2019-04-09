@@ -56,10 +56,10 @@ def debevec_maliks(Z, dT, l, w, n):
     k += 1
 
     # Ta hensyn til glattheten
-    for i in range(n - 2):
-        A[k, i] = l * w(i + 1)
-        A[k, i + 1] = -2 * l * w(i + 1)
-        A[k, i + 2] = l * w(i + 1)
+    for i in range(1, n - 1):
+        A[k, i - 1] = l * w(i)
+        A[k, i] = -2 * l * w(i)
+        A[k, i + 1] = l * w(i)
 
         k += 1
 
