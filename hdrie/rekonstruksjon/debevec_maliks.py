@@ -69,3 +69,35 @@ def debevec_maliks(Z, dT, l, w, n):
     return x[:n], x[n:]
 
     # end snippet debevec-maliks-algo
+
+
+def debevec_maliks_color(Z_rgb, dT, l, w, n):
+    """
+    Gitt et sett med pikselverdier (i) observert over flere bilder (inkl.
+    fargekanaler) med ulik eksponering (j), returner responskurven til
+    bildesettet og logaritmen til irradiansen til de observerte pikslene.
+
+    Parametere
+    ----------
+
+    Z : 3-dim array
+        Fargekanalene (k), pikselverdiene (i) som er observert med ulik
+        eksponering (j).
+    dT : array
+        Logaritmisk delta tid for ekspoering (j).
+    l : float
+        Konstant som bestemmer mengden glatthet.
+    w : function
+        Returnerer et vekttall basert på gitt z.
+    n : integer
+        Antall ulike pikselverdier (antar at pikselverdier går fra 0 til n - 1).
+
+    Returnerer
+    ----------
+
+    [(g, lE)] : array
+        Returnerer en array av tupler der hver tuple inneholder responskurven til
+        fargekanalen og den andre delen er den logaritmiske irradiansen til
+        fargekanalen.
+    """
+    return [debevec_maliks(Z, dT, l, w, n) for Z in Z_rgb]
