@@ -96,8 +96,8 @@ def debevec_maliks_color(Z_rgb, dT, l, w, n):
     ----------
 
     [(g, lE)] : array
-        Returnerer en array av tupler der hver tuple inneholder responskurven til
-        fargekanalen og den andre delen er den logaritmiske irradiansen til
+        Returnerer en array av tupler der hver tuple inneholder responskurven
+        til fargekanalen og den andre delen er den logaritmiske irradiansen til
         fargekanalen.
     """
     return [debevec_maliks(Z, dT, l, w, n) for Z in Z_rgb]
