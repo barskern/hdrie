@@ -6,11 +6,11 @@ med bilder for å kunne gjennskape et bilde med høy dynamisk radians.
 import numpy as np
 
 
-def debevec_maliks(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None):
+def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None):
     """
     Gitt et sett med pikselverdier observert over flere bilder med ulik
-    eksponering, returner responskurven til bildesettet og logaritmen til
-    irradiansen til de observerte pikslene.
+    eksponering, returner den logaritmiske responskurven til bildesettet og
+    logaritmen til irradiansen til de observerte pikslene.
 
     Parametere
     ----------
@@ -30,7 +30,7 @@ def debevec_maliks(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=Non
     Returnerer
     ----------
     g : (antall_verdier,) ndarray
-        Responskurven til pikselverdiene.
+        Logaritmen til responskurven til pikselverdiene.
     lE : {(I,), (X, Y)} ndarray
         Logaritmen til irradiansen til pikslen ved gitt posisjon.
     """
@@ -38,7 +38,7 @@ def debevec_maliks(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=Non
     antall_eksp = eksp_bilder.shape[0]
     if not len(eksp_tider) == antall_eksp:
         raise ValueError(
-            "eksp_tider må ha nøyaktig like mange verdier som det er eksponeringer i eksp_bilder"
+            "eksp_tider må ha like mange verdier som det er eksponeringer i eksp_bilder"
         )
     # Tar vare på den gamle formen til plasseringen slik at man kan endre de
     # logaritmiske irradiansene til å ha samme form som inngangsverdien.
@@ -115,13 +115,11 @@ def debevec_maliks(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=Non
     # end snippet debevec-maliks-algo
 
 
-def rekonstruer_irradians(
-    eksp_bilder, eksp_tider, responskurve, antall_verdier, vekter=None
-):
+def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
     """
     Gitt et sett med pikselverdier observert over flere bilder med ulik
-    eksponering og responskurven til bildene, returner den rekonstruerte
-    irradiansen ved hver enkelt pikselposisjon.
+    eksponering og den logaritmiske responskurven til bildene, returner den
+    rekonstruerte irradiansen ved hver enkelt pikselposisjon.
 
     Parametere
     ----------
@@ -129,8 +127,8 @@ def rekonstruer_irradians(
         Ulike eksponeringer (j) av pikselverdier (i) eller (x, y).
     eksp_tider : (E,) ndarray
         Eksponeringstid av bildet med eksponering (j).
-    responskurve : (antall_verdier,) ndarray
-        Responskurven til bildene.
+    res_kurve : (antall_verdier,) ndarray
+        Den logaritmiske responskurven til bildene.
     antall_verdier : integer
         Antall ulike pikselverdier (antas at pikselverdier går fra 0 til
         antall_verdier - 1).
@@ -142,7 +140,7 @@ def rekonstruer_irradians(
     Returnerer
     ----------
     lE : {(I,), (X, Y)} ndarray
-        Logaritmen til irradiansen til pikslen ved gitt posisjon.
+        Logaritmen til irradiansen til bildene.
     """
     if vekter is None:
         vekter = np.concatenate(
@@ -161,6 +159,12 @@ def rekonstruer_irradians(
     else:
         raise ValueError("eksp_bilder må ha enten 2 eller 3 dimensjoner")
 
-    return (vekter[eksp_bilder] * (responskurve[eksp_bilder] - np.log(eksp_tider))).sum(
-        -1
-    ) / vekter[eksp_bilder].sum(-1)
+    s = (vekter[eksp_bilder] * (res_kurve[eksp_bilder] - np.log(eksp_tider))).sum(-1)
+    d = vekter[eksp_bilder].sum(-1)
+
+    # Dersom det er noen nuller i `d` så gjør vi de om til `1`. Ettersom man
+    # ganger med vektene over brøkstreken, så blir resultatet for den
+    # posisjonen uansett 0.
+    d[d == 0] = 1
+
+    return s / d
