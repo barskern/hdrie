@@ -107,12 +107,12 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
     # g''(z), altså få kurven mest mulig glatt.
     A[k, i + [-1, 0, 1]] = vekter[i] * glatthet * [1, -2, 1]
 
-    # Løs likningssettet.
+    # Løs likningssettet og dermed finn den best tilpassede responskurven.
     x = np.linalg.lstsq(A, b, rcond=None)[0]
 
-    return x[:antall_verdier], x[antall_verdier:].reshape(orginal_verdi_form)
-
     # end snippet debevec-maliks-algo
+
+    return x[:antall_verdier], x[antall_verdier:].reshape(orginal_verdi_form)
 
 
 def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
