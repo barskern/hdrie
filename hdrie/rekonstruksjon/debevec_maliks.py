@@ -63,7 +63,7 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
     # Logaritmen av eksponseringstidene (slik at brukeren slipper).
     log_eksp_tider = np.log(eksp_tider)
 
-    # start snippet debevec-maliks-algo
+    # start snippet debevec-maliks-resp
 
     A = np.zeros(
         (
@@ -75,21 +75,16 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
 
     # Indeksen til irradiansene i likningssettet.
     irradians_indeks = np.arange(antall_piksler) + antall_verdier
-
     # Indeksen inn i matrisen for likningene.
     k = np.arange(antall_piksler)
-
     # For hver eksponering av bildet og tilhørende logaritmisk eksponeringstid.
     for ln_eksp, piksler in zip(log_eksp_tider, eksp_bilder):
         # Alle responskurvene for disse plasseringene har `w(z)`.
         A[k, piksler] = vekter[piksler]
-
         # Alle irradiansene for disse plasseringene har `-w(z)`.
         A[k, irradians_indeks] = -vekter[piksler]
-
         # Alle tidene for disse plasseringene har `w(z) * ln dt`.
         b[k] = vekter[piksler] * ln_eksp
-
         # Inkrementer til neste del av matrisen for neste eksponering.
         k += antall_piksler
 
@@ -98,19 +93,15 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
 
     # Lag indeksering for alle verdier (eksl. ytterpunkter) i 3 dimensjoner.
     i = np.arange(1, antall_verdier - 1)[:, np.newaxis].repeat(3, axis=1)
-
-    # Endre `k` til å indeksere over alle verdier (utenom ytterpunkter) med
-    # offsett fra tidligere definert likning.
+    # Lag indeksering for alle likningene i `A` som skal settes.
     k = i + (antall_piksler * antall_eksp)
-
-    # Sørg for at kurven er glatt ved å legge til ledd som prøver å minimere
-    # g''(z), altså få kurven mest mulig glatt.
+    # Gjør kurven glatt ved å legge til ledd som prøver å minimere g''(z).
     A[k, i + [-1, 0, 1]] = vekter[i] * glatthet * [1, -2, 1]
 
-    # Løs likningssettet og dermed finn den best tilpassede responskurven.
+    # Løs likningssettet for å finne den best tilpassede responskurven.
     x = np.linalg.lstsq(A, b, rcond=None)[0]
 
-    # end snippet debevec-maliks-algo
+    # end snippet debevec-maliks-resp
 
     return x[:antall_verdier], x[antall_verdier:].reshape(orginal_verdi_form)
 
@@ -159,12 +150,14 @@ def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
     else:
         raise ValueError("eksp_bilder må ha enten 2 eller 3 dimensjoner")
 
+    # start snippet debevec-maliks-irrad
+
     s = (vekter[eksp_bilder] * (res_kurve[eksp_bilder] - np.log(eksp_tider))).sum(-1)
     d = vekter[eksp_bilder].sum(-1)
 
-    # Dersom det er noen nuller i `d` så gjør vi de om til `1`. Ettersom man
-    # ganger med vektene over brøkstreken, så blir resultatet for den
-    # posisjonen uansett 0.
+    # For å forhindre deling på 0, så endres 0 til 1.
     d[d == 0] = 1
 
     return s / d
+
+    # end snippet debevec-maliks-irrad
