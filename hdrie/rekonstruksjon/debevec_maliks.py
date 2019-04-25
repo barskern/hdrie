@@ -25,7 +25,7 @@ def debevec_maliks(
     antall_pikselverdier : integer
         Antall ulike pikselverdier (antar at pikselverdier går fra 0 til
         antall_pikselverdier - 1).
-    vekter : {(I,), (X, Y)} ndarray, optional
+    vekter : {(antall_pikselverdier,)} ndarray, optional
         Vektfunksjon som returner et vekttall basert på pikselverdi. Dersom den
         ikke er spesifisert så blir den definert som absoluttverdien av
         avstanden til midten av pikselverdiene.
