@@ -110,3 +110,54 @@ def debevec_maliks(
     )
 
     # end snippet debevec-maliks-algo
+
+
+def rekonstruer_irradians(
+    eksp_bilder, eksp_tider, responskurve, antall_pikselverdier, vekter=None
+):
+    """
+    Gitt et sett med pikselverdier observert over flere bilder med ulik
+    eksponering og responskurven til bildene, returner den rekonstruerte
+    irradiansen ved hver enkelt pikselposisjon.
+
+    Parametere
+    ----------
+    eksp_bilder : {(E, I), (E, X, Y)} ndarray
+        Ulike eksponeringer (j) av pikselverdier (i) eller (x, y).
+    eksp_tider : (E,) ndarray
+        Eksponeringstid av bildet med eksponering (j).
+    responskurve : (antall_pikselverdier,) ndarray
+        Responskurven til bildene.
+    antall_pikselverdier : integer
+        Antall ulike pikselverdier (antas at pikselverdier går fra 0 til
+        antall_pikselverdier - 1).
+    vekter : {(antall_pikselverdier,)} ndarray, optional
+        Vektfunksjon som returner et vekttall basert på pikselverdi. Dersom den
+        ikke er spesifisert så blir den definert som absoluttverdien av
+        avstanden til midten av pikselverdiene.
+
+    Returnerer
+    ----------
+    lE : {(I,), (X, Y)} ndarray
+        Logaritmen til irradiansen til pikslen ved gitt posisjon.
+    """
+    if vekter is None:
+        vekter = np.concatenate(
+            (
+                np.arange(1, 1 + antall_pikselverdier // 2),
+                np.arange(antall_pikselverdier // 2, 0, -1),
+            )
+        )
+
+    if len(eksp_bilder.shape) == 2:
+        # Istedenfor (E, I), så gjør vi om til (I, E).
+        eksp_bilder = eksp_bilder.transpose(1, 0)
+    elif len(eksp_bilder.shape) == 3:
+        # Istedenfor (E, X, Y), så gjør vi om til (X, Y, E).
+        eksp_bilder = eksp_bilder.transpose(1, 2, 0)
+    else:
+        raise ValueError("eksp_bilder må ha enten 2 eller 3 dimensjoner")
+
+    return (vekter[eksp_bilder] * (responskurve[eksp_bilder] - np.log(eksp_tider))).sum(
+        -1
+    ) / vekter[eksp_bilder].sum(-1)
