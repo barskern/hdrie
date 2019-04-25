@@ -58,7 +58,7 @@ def debevec_maliks(
     if vekter is None:
         vekter = np.concatenate(
             (
-                np.arange(0, antall_pikselverdier // 2),
+                np.arange(1, 1 + antall_pikselverdier // 2),
                 np.arange(antall_pikselverdier // 2, 0, -1),
             )
         )
