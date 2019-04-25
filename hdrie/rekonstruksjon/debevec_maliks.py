@@ -35,7 +35,7 @@ def debevec_maliks(
     g : (antall_pikselverdier,) ndarray
         Responskurven til pikselverdiene.
     lE : {(I,), (X, Y)} ndarray
-        Irradiansen til pikslen ved gitt posisjon.
+        Logaritmen til irradiansen til pikslen ved gitt posisjon.
     """
 
     antall_eksp = eksp_bilder.shape[0]
