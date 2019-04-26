@@ -5,6 +5,8 @@ med bilder for å kunne gjennskape et bilde med høy dynamisk radians.
 
 import numpy as np
 
+# start snippet debevec-maliks-resp
+
 
 def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None):
     """
@@ -63,8 +65,6 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
     # Logaritmen av eksponseringstidene (slik at brukeren slipper).
     log_eksp_tider = np.log(eksp_tider)
 
-    # start snippet debevec-maliks-resp
-
     A = np.zeros(
         (
             antall_eksp * antall_piksler + antall_verdier - 1,
@@ -101,9 +101,12 @@ def responskurve(eksp_bilder, eksp_tider, glatthet, antall_verdier, vekter=None)
     # Løs likningssettet for å finne den best tilpassede responskurven.
     x = np.linalg.lstsq(A, b, rcond=None)[0]
 
-    # end snippet debevec-maliks-resp
-
     return x[:antall_verdier], x[antall_verdier:].reshape(orginal_verdi_form)
+
+
+# end snippet debevec-maliks-resp
+
+# start snippet debevec-maliks-irrad
 
 
 def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
@@ -150,8 +153,6 @@ def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
     else:
         raise ValueError("eksp_bilder må ha enten 2 eller 3 dimensjoner")
 
-    # start snippet debevec-maliks-irrad
-
     s = (vekter[eksp_bilder] * (res_kurve[eksp_bilder] - np.log(eksp_tider))).sum(-1)
     d = vekter[eksp_bilder].sum(-1)
 
@@ -160,4 +161,5 @@ def irradians(eksp_bilder, eksp_tider, res_kurve, antall_verdier, vekter=None):
 
     return s / d
 
-    # end snippet debevec-maliks-irrad
+
+# end snippet debevec-maliks-irrad

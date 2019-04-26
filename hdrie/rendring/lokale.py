@@ -3,7 +3,7 @@ from .globale import gamma
 import numpy as np
 
 
-def lin_spat_filter(bilde, render=gamma, sigma=4):
+def lin_spat_filter(bilde, render=gamma, sigma=2):
     """
     Gitt et HDR-bilde og en rendringsfunksjon, returnerer resultatet av å
     gjennomføre en lineær spatiell filtrering av bildet og anvende
@@ -25,6 +25,9 @@ def lin_spat_filter(bilde, render=gamma, sigma=4):
     """
     lav_pass = gaussian_filter(bilde, sigma=(sigma, sigma, 0))
     return bilde - lav_pass + render(lav_pass)
+
+
+# start snippet ikke-lin-spat-filter
 
 
 def ikke_lin_spat_filter(
@@ -97,3 +100,6 @@ def ikke_lin_spat_filter(
     # Kjør resulatet av filteret gjennom rendringsfunksjonen og legg til
     # detaljene.
     return bilde - m + render(m)
+
+
+# end snippet ikke-lin-spat-filter
